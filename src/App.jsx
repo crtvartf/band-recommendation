@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import './App.css';
+import './index.css';
 import abi from './utils/BandRecommendation.json';
+import useLocalStorage from 'use-local-storage';
+
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -85,27 +87,38 @@ const App = () => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
+
+  const [theme, setTheme] = useLocalStorage('theme' ? 'dark': 'light');
+  
+  const switchTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme)
+  }
   
   return (
-    <div className="mainContainer">
+    <div className="app" data-theme={theme}>
       <div className="dataContainer">
         <div className="header">
         👋 Hey there!
         </div>
 
-        <div className="bio">
+        <div className="container">
           Music makes our life better. Name a band that you think deserves to be remembered.
         </div>
         
-        <button className="bandButton" onClick={recommend}>
+        <button onClick={recommend}>
           Name a band
         </button>
 
         {!currentAccount && (
-          <button className="bandButton" onClick={connectWallet}>
+          <button onClick={connectWallet}>
             Connect Wallet
           </button>
         )}
+      </div>
+      <div className="theme-toggle">
+        <h2>Light Theme</h2>
+        <i onClick={switchTheme} className='fas fa-toggle-on'></i>
       </div>
     </div>
   );
