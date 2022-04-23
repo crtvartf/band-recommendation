@@ -34,8 +34,8 @@ a {
 }
 
 /* Fixes to do:
-    - Stick theme-toggle to the main container
-    - Change Light / Dark Theme text depending on a theme
+    - Change slider depending on a theme: light is on the left, dark is on the right;
+    - Change Light / Dark Theme text depending on a theme;
 */
 
 .app {
@@ -48,6 +48,7 @@ a {
   justify-content: center;
   font-size: .8rem;
   transition: all .5s;
+  
 }
 
 .dataContainer {
@@ -55,8 +56,9 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 600px;
-  margin: auto;
+  max-width: 456px;
+  margin-right: auto;
+  margin-left: auto;
   padding: 1.5rem;
   box-shadow: 0px 0px 12px var(--border);
   border-radius: 8px;
@@ -70,11 +72,11 @@ a {
   justify-content: center;
   align-items: center;
   max-width: 100%;
-  margin: auto;
+  margin-bottom: 8px;
   padding: .8rem;
 }
 
-.header {
+.greetings {
   text-align: center;
   margin: -7rem 0 2rem;
   font-size: 48px;
@@ -91,6 +93,7 @@ h2 {
 }
 
 .theme-toggle {
+  position: static;
   text-align: center;
   vertical-align:top;
 }
