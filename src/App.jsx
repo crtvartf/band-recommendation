@@ -4,14 +4,13 @@ import './index.css';
 import abi from './utils/BandRecommendation.json';
 import useLocalStorage from 'use-local-storage';
 
-
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const contractAddress = "0xFC493A6334e667f3dDc53Bac7D78a2c70FA533bb";
+  const contractAddress = "0xfa37B77bFe9582Af27333b31F4a03E53D03c191c";
   const contractABI = abi.abi;
   const [allRecommendations, setAllRecommendations] = useState([]);
   const [bandName, setBandName] = useState("");
-  
+
   const checkIfWalletIsConnected = async () => {
     try {
       const { ethereum } = window;
@@ -50,17 +49,17 @@ const App = () => {
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
       console.log("Connected", accounts[0]);
-      setCurrentAccount(accounts[0]); 
+      setCurrentAccount(accounts[0]);
       // await getAllBands();
     } catch (error) {
       console.log(error)
     }
   }
-  
+
   const handleChange = (event) => {
     setBandName(event.target.value);
   }
-  
+
   const recommend = async (bandName) => {
     try {
       const { ethereum } = window;
@@ -87,25 +86,27 @@ const App = () => {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   // Creating a method to extract all recommendations from blockchain
 
   const getAllRecommendations = async () => {
+    const { ethereum } = window;
+
     try {
-      if (window.ethereum) {
+      if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const bandContract = new ethers.Contract(contractAddress, BandRecommendation.abi, signer);
 
         // Calling "getAllRecommendations" method from smart contract
-        
+
         const bands = await bandContract.getAllRecommendations();
 
         // We need only clean data (address, readable timestamp and message)
-        
+
         const bandsCleaned = bands.map((recommend) => {
           return {
             address: recommend.sender,
@@ -115,7 +116,7 @@ const App = () => {
         });
 
         // Storing required data in React State
-        
+
         setAllRecommendations(bandsCleaned);
       } else {
         console.log("Ethereum object doesn't exist!")
@@ -124,19 +125,19 @@ const App = () => {
       console.log(error);
     }
   }
-  
+
   useEffect(() => {
     checkIfWalletIsConnected();
     let bandContract;
-  
+
     const onNewRecommendation = (sender, timestamp, band) => {
       console.log("newRecommendation", sender, timestamp, band);
-      setAllRecommendation((prevState) => [
+      setAllRecommendations((prevState) => [
         ...prevState,
         {
           address: sender,
           timestamp: new Date(timestamp * 1000),
-          message: band
+          message: band,
         },
       ]);
     };
@@ -154,18 +155,18 @@ const App = () => {
       }
     }
   }, []);
-  
+
   const [theme, setTheme] = useLocalStorage('theme' ? 'dark': 'light');
-  
+
   const switchTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme)
   }
-  
+
   return (
-    
+
     <div className="app" data-theme={theme}>
-      
+
       <header>
         <div className="theme-toggle">
           <i onClick={switchTheme} className='fas fa-toggle-on'></i>
@@ -177,13 +178,13 @@ const App = () => {
             </button>
           )}
         </div>
-        
+
       </header>
 
       <div className="greetings">
         🤘 Hey there!
       </div>
-      
+
       <div className="dataContainer">
 
         <div className="container">
@@ -194,26 +195,26 @@ const App = () => {
           type="text"
           placeholder="Band name"
           onChange={handleChange}
-          required 
+          required
         />
-        
+
         <button onClick={() => recommend(bandName)}>
           Recommend
         </button>
       </div>
-      
-      <div className="dataContainer">
+
+      <div>
         {allRecommendations.map((bands, index) => {
-        return (
-          <div key={index}>
-              <div>Address: {recommend.sender}</div>
-              <div>Time: {recommend.timestamp.toString()}</div>
-              <div>Message: {recommend.band}</div>
-          </div>
+          return (
+            <div key={index} className="dataContainer">
+              <div>Address: {bands.address}</div>
+              <div>Time: {bands.timestamp.toString()}</div>
+              <div>Band: {bands.message}</div>
+            </div>
           );
         })}
       </div>
-      
+
     </div>
   );
 }
