@@ -2,4 +2,13 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+.env
+coverage
+coverage.json
+typechain
+band-recommendation.zip
 *.local
+
+#Hardhat files
+cache
+artifacts
